@@ -23,8 +23,9 @@
  */
 
 import { parse } from 'url';
+import { WebSocketServer } from 'ws';
 import { nanoid } from 'nanoid';
-import type { Server, WebSocket as WebSocketBase, WebSocketServer } from 'ws';
+import type { Server, WebSocket as WebSocketBase } from 'ws';
 import type { IncomingMessage } from 'http';
 import type { Duplex } from 'stream';
 
