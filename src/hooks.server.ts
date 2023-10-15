@@ -25,6 +25,8 @@ import { building } from '$app/environment';
 import { GlobalThisWSS } from '$lib/server/webSocketUtils';
 import type { Handle } from '@sveltejs/kit';
 import type { ExtendedGlobal, ExtendedWebSocket } from '$lib/server/webSocketUtils';
+import * as TodoHandler from '$lib/server/todoHandler';
+import type { WebSocketMessage } from '$types';
 
 // This can be extracted into a separate file
 let wssInitialized = false;
@@ -44,8 +46,25 @@ const startupWebsocketServer = () => {
 				console.log(`[wss:kit] client disconnected (${ws.socketId})`);
 			});
 
-			ws.on('message', (event: string) => {
-				console.log('got event', JSON.parse(event));
+			ws.on('message', (event) => {
+				try {
+					const data: WebSocketMessage = JSON.parse(event.toString());
+					let success = false;
+					switch (data.type) {
+						case 'TODO':
+							success = TodoHandler.handle(data.payload);
+							break;
+						default:
+							throw new Error("Unexpected message type");
+					}
+					if (success) {
+						// Broadcast updates too all
+						wss.clients.forEach((client) => client.send(JSON.stringify(data)))
+					}
+				} catch (err) {
+					console.error(err);
+				}
+
 			});
 		});
 		wssInitialized = true;

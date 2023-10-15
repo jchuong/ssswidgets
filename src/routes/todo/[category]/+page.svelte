@@ -31,7 +31,11 @@
 			item.label === label ? { ...item, checked: !item.checked } : item
 		);
 		if (socket) {
-			socket.send(JSON.stringify(checkboxes));
+			const message: WebSocketTodo = {
+				type: 'TODO',
+				payload: checkboxes
+			}
+			socket.send(JSON.stringify(message));
 		}
 	}
 
