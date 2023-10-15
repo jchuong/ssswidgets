@@ -1,5 +1,5 @@
 export function load({ params }) {
-    return {
-        category: params.category
-    }
+	return {
+		category: params.category
+	};
 }
