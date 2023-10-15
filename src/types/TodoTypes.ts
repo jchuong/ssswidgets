@@ -1,4 +1,4 @@
 export interface TodoItem {
-    label: string;
-    checked: boolean;
+	label: string;
+	checked: boolean;
 }

@@ -24,7 +24,7 @@
 import { building } from '$app/environment';
 import { GlobalThisWSS } from '$lib/server/webSocketUtils';
 import type { Handle } from '@sveltejs/kit';
-import type { ExtendedGlobal } from '$lib/server/webSocketUtils';
+import type { ExtendedGlobal, ExtendedWebSocket } from '$lib/server/webSocketUtils';
 
 // This can be extracted into a separate file
 let wssInitialized = false;
@@ -33,7 +33,7 @@ const startupWebsocketServer = () => {
 	console.log('[wss:kit] setup');
 	const wss = (globalThis as ExtendedGlobal)[GlobalThisWSS];
 	if (wss !== undefined) {
-		wss.on('connection', (ws, _request) => {
+		wss.on('connection', (ws: ExtendedWebSocket, _request) => {
 			// This is where you can authenticate the client from the request
 			// const session = await getSessionFromCookie(request.headers.cookie || '');
 			// if (!session) ws.close(1008, 'User not authenticated');
@@ -42,6 +42,10 @@ const startupWebsocketServer = () => {
 
 			ws.on('close', () => {
 				console.log(`[wss:kit] client disconnected (${ws.socketId})`);
+			});
+
+			ws.on('message', (event: string) => {
+				console.log('got event', JSON.parse(event));
 			});
 		});
 		wssInitialized = true;

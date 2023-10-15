@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { Checkbox } from 'yesvelte';
-    import type { TodoItem } from '$types'
+	import type { TodoItem, WebSocketTodo } from '$types';
 
-	let checkboxes: TodoItem[] = [];
+	let socket: WebSocket;
+	let checkboxes: Array<TodoItem> = [];
 	if (browser) {
-		const socket = new WebSocket('ws://localhost:5173/websocket');
+		socket = new WebSocket('ws://localhost:5173/websocket');
 		socket.addEventListener('open', () => {
 			console.log('listening on wss');
 		});
@@ -13,19 +14,25 @@
 		socket.addEventListener('message', (event) => {
 			console.log('received message', event.data);
 			try {
-				const payload = JSON.parse(event.data);
-				if (payload.type !== 'TODO') {
+				const message: WebSocketTodo = JSON.parse(event.data);
+				if (message.type !== 'TODO') {
 					return;
 				}
-				checkboxes = payload.checkboxes;
+				checkboxes = message.payload;
 			} catch (err) {
 				console.error(err);
 			}
 		});
 	}
 
-	function handleCheckboxChange(item: TodoItem) {
-		console.log(`Checkbox for ${item.label} toggled. Checked: ${item.checked}`);
+	// Update the checkboxes, then send to server for all clients
+	function handleChange(label: string) {
+		checkboxes = checkboxes.map((item) =>
+			item.label === label ? { ...item, checked: !item.checked } : item
+		);
+		if (socket) {
+			socket.send(JSON.stringify(checkboxes));
+		}
 	}
 
 	export let data;
@@ -36,9 +43,9 @@
 <div>
 	{#each checkboxes as item (item.label)}
 		<Checkbox
-			bind:checked={item.checked}
+			checked={item.checked}
 			label={item.label}
-			on:change={() => handleCheckboxChange(item)}
+			on:change={() => handleChange(item.label)}
 		/>
 	{/each}
 </div>

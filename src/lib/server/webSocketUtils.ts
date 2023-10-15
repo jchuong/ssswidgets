@@ -69,7 +69,7 @@ export const createWSSGlobalInstance = () => {
 			{ label: 'First', checked: false },
 			{ label: 'Second', checked: true }
 		];
-		const data = { type: 'TODO', checkboxes: payload };
+		const data = { type: 'TODO', payload };
 		wss.clients.forEach((client) => client.send(JSON.stringify(data)));
 
 		ws.on('close', () => {
