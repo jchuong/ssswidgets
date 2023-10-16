@@ -25,7 +25,7 @@ import { building } from '$app/environment';
 import { GlobalThisWSS } from '$lib/server/webSocketUtils';
 import type { Handle } from '@sveltejs/kit';
 import type { ExtendedGlobal, ExtendedWebSocket } from '$lib/server/webSocketUtils';
-import { writeConfigFile } from '$lib/server/dataUtils';
+import { readConfigFile, writeConfigFile } from '$lib/server/dataUtils';
 import type { WebSocketMessage } from '$types';
 
 // This can be extracted into a separate file
@@ -49,17 +49,25 @@ const startupWebsocketServer = () => {
 			ws.on('message', (event) => {
 				try {
 					const data: WebSocketMessage = JSON.parse(event.toString());
-					let success = false;
-					switch (data.type) {
-						case 'TODO':
-							success = writeConfigFile(data);
-							break;
-						default:
-							throw new Error("Unexpected message type");
-					}
-					if (success) {
-						// Broadcast updates too all
-						wss.clients.forEach((client) => client.send(JSON.stringify(data)))
+					if (data.action === 'READ') {
+						const payload = readConfigFile(data);
+						if (payload) {
+							// send to client
+							ws.send(JSON.stringify({ ...data, payload }))
+						}
+					} else {
+						let success = false;
+						switch (data.type) {
+							case 'TODO':
+								success = writeConfigFile(data);
+								break;
+							default:
+								throw new Error("Unexpected message type");
+						}
+						if (success) {
+							// Broadcast updates too all
+							wss.clients.forEach((client) => client.send(JSON.stringify(data)))
+						}
 					}
 				} catch (err) {
 					console.error(err);

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { Checkbox } from 'yesvelte';
+	import { Checkbox, El } from 'yesvelte';
 	import type { TodoItem, WebSocketTodo } from '$types';
 
 	let socket: WebSocket;
@@ -9,6 +9,12 @@
 		socket = new WebSocket('ws://localhost:5173/websocket');
 		socket.addEventListener('open', () => {
 			console.log('listening on wss');
+			const message: WebSocketTodo = {
+				type: 'TODO',
+				action: 'READ',
+				payload: [],
+			};
+			socket.send(JSON.stringify(message));
 		});
 
 		socket.addEventListener('message', (event) => {
@@ -33,6 +39,7 @@
 		if (socket) {
 			const message: WebSocketTodo = {
 				type: 'TODO',
+				action: 'WRITE',
 				payload: checkboxes
 			}
 			socket.send(JSON.stringify(message));
@@ -44,7 +51,7 @@
 
 <h1>Hello world this is Catgeory {data.category}</h1>
 
-<div>
+<El container="lg" p="1" m="2">
 	{#each checkboxes as item (item.label)}
 		<Checkbox
 			checked={item.checked}
@@ -52,4 +59,4 @@
 			on:change={() => handleChange(item.label)}
 		/>
 	{/each}
-</div>
+</El>

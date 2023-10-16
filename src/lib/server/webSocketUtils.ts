@@ -65,12 +65,6 @@ export const createWSSGlobalInstance = () => {
 	wss.on('connection', (ws) => {
 		ws.socketId = nanoid();
 		console.log(`[wss:global] client connected (${ws.socketId})`);
-		const payload = [
-			{ label: 'First', checked: false },
-			{ label: 'Second', checked: true }
-		];
-		const data = { type: 'TODO', payload };
-		wss.clients.forEach((client) => client.send(JSON.stringify(data)));
 
 		ws.on('close', () => {
 			console.log(`[wss:global] client disconnected (${ws.socketId})`);
