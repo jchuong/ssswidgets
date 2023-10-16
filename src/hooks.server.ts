@@ -25,7 +25,7 @@ import { building } from '$app/environment';
 import { GlobalThisWSS } from '$lib/server/webSocketUtils';
 import type { Handle } from '@sveltejs/kit';
 import type { ExtendedGlobal, ExtendedWebSocket } from '$lib/server/webSocketUtils';
-import * as TodoHandler from '$lib/server/todoHandler';
+import { writeConfigFile } from '$lib/server/dataUtils';
 import type { WebSocketMessage } from '$types';
 
 // This can be extracted into a separate file
@@ -52,7 +52,7 @@ const startupWebsocketServer = () => {
 					let success = false;
 					switch (data.type) {
 						case 'TODO':
-							success = TodoHandler.handle(data.payload);
+							success = writeConfigFile(data);
 							break;
 						default:
 							throw new Error("Unexpected message type");
