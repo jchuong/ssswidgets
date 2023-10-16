@@ -53,7 +53,7 @@ const startupWebsocketServer = () => {
 						const payload = readConfigFile(data);
 						if (payload) {
 							// send to client
-							ws.send(JSON.stringify({ ...data, payload }))
+							ws.send(JSON.stringify({ ...data, payload }));
 						}
 					} else {
 						let success = false;
@@ -62,17 +62,16 @@ const startupWebsocketServer = () => {
 								success = writeConfigFile(data);
 								break;
 							default:
-								throw new Error("Unexpected message type");
+								throw new Error('Unexpected message type');
 						}
 						if (success) {
 							// Broadcast updates too all
-							wss.clients.forEach((client) => client.send(JSON.stringify(data)))
+							wss.clients.forEach((client) => client.send(JSON.stringify(data)));
 						}
 					}
 				} catch (err) {
 					console.error(err);
 				}
-
 			});
 		});
 		wssInitialized = true;

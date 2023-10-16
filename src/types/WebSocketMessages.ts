@@ -5,7 +5,7 @@ export type Action = 'READ' | 'WRITE';
 
 export interface WebSocketMessage {
 	type: MessageType;
-    action: Action;
+	action: Action;
 	payload: any;
 }
 

@@ -12,7 +12,7 @@
 			const message: WebSocketTodo = {
 				type: 'TODO',
 				action: 'READ',
-				payload: [],
+				payload: []
 			};
 			socket.send(JSON.stringify(message));
 		});
@@ -41,7 +41,7 @@
 				type: 'TODO',
 				action: 'WRITE',
 				payload: checkboxes
-			}
+			};
 			socket.send(JSON.stringify(message));
 		}
 	}
