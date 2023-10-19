@@ -7,6 +7,6 @@
 	<link rel="stylesheet" href={tabler} />
 </svelte:head>
 
-<El container="lg" p="1" m="2">
+<El container="lg" p="1">
 	<slot />
 </El>
