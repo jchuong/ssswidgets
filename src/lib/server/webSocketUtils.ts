@@ -31,11 +31,6 @@ import type { Duplex } from 'stream';
 
 export const GlobalThisWSS = Symbol.for('sveltekit.wss');
 
-export interface ExtendedWebSocket extends WebSocketBase {
-	socketId: string;
-	// userId: string;
-}
-
 // You can define server-wide functions or class instances here
 // export interface ExtendedServer extends Server<ExtendedWebSocket> {};
 
