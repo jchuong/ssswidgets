@@ -2,13 +2,13 @@ import type { MessageType, WebSocketMessage } from '$types';
 import fs from 'fs';
 import path from 'path';
 
-const filenameMapping: Record<MessageType, string> = {
+const TypePathMapping: Record<MessageType, string> = {
 	TODO: 'todo'
 };
 
 function getFilePath(data: WebSocketMessage) {
-	const filename = filenameMapping[data.type];
-	const filePath = path.join('data', `category_${filename}.json`);
+	const typePath = TypePathMapping[data.type];
+	const filePath = path.join('data', `${typePath}`, `${data.category}.json`);
 	return filePath;
 }
 

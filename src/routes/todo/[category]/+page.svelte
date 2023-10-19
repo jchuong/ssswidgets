@@ -3,6 +3,8 @@
 	import { Checkbox, El } from 'yesvelte';
 	import type { TodoItem, WebSocketTodo } from '$types';
 
+	export let data;
+
 	let socket: WebSocket;
 	let checkboxes: Array<TodoItem> = [];
 	if (browser) {
@@ -12,6 +14,7 @@
 			const message: WebSocketTodo = {
 				type: 'TODO',
 				action: 'READ',
+				category: data.category,
 				payload: []
 			};
 			socket.send(JSON.stringify(message));
@@ -21,7 +24,8 @@
 			console.log('received message', event.data);
 			try {
 				const message: WebSocketTodo = JSON.parse(event.data);
-				if (message.type !== 'TODO') {
+				if (message.type !== 'TODO' || message.category !== data.category) {
+					// Message was not for this client
 					return;
 				}
 				checkboxes = message.payload;
@@ -40,13 +44,12 @@
 			const message: WebSocketTodo = {
 				type: 'TODO',
 				action: 'WRITE',
+				category: data.category,
 				payload: checkboxes
 			};
 			socket.send(JSON.stringify(message));
 		}
 	}
-
-	export let data;
 </script>
 
 <h1>Hello world this is Catgeory {data.category}</h1>
