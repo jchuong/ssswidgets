@@ -57,8 +57,6 @@
 	}
 </script>
 
-<h1>Hello world this is Catgeory {data.category}</h1>
-
 <El container="lg" p="1" m="2">
 	{#if !error && checkboxes.length === 0}
 		<Spinner color="primary" />
