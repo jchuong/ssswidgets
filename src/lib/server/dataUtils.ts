@@ -34,6 +34,11 @@ export function writeConfigFile(data: WebSocketMessage) {
 	return false;
 }
 
+/**
+ * Returns list of json files for the page type
+ * @param type
+ * @returns list of files in the data directory for the type
+ */
 export function listConfigFiles(type: MessageType) {
 	const typePath = TypePathMapping[type];
 	try {
