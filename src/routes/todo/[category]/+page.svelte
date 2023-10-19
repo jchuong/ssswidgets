@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { Alert, Checkbox, El } from 'yesvelte';
+	import { Alert, Checkbox, El, Spinner } from 'yesvelte';
 	import type { TodoItem, WebSocketError, WebSocketMessage, WebSocketTodo } from '$types';
 
 	export let data;
@@ -60,6 +60,9 @@
 <h1>Hello world this is Catgeory {data.category}</h1>
 
 <El container="lg" p="1" m="2">
+	{#if !error && checkboxes.length === 0}
+		<Spinner color="primary" />
+	{/if}
 	{#each checkboxes as item (item.label)}
 		<Checkbox
 			checked={item.checked}
