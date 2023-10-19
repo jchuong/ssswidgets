@@ -1,22 +1,11 @@
-# create-svelte
+# SSSWidgets - Simple Svelte Stream Widgets
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+A small project containing some widgets for streaming, built with SvelteKit and yesvelte.
+The main idea behind the project is to be able to easily add some simple widget to OBS and control it via a browser in real time.
 
-## Creating a project
+## Developing and using the app
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Once you've created a project and installed dependencies with `npm install`.
 
 ```bash
 npm run dev
@@ -25,14 +14,8 @@ npm run dev
 npm run dev -- --open
 ```
 
-## Building
+Files used to power the widgets are to be placed in the `data` directory. See the internal README for more information and examples.
 
-To create a production version of your app:
+## Production
 
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+There is no production, this project is meant to be run locally on your stream PC with dev mode.
