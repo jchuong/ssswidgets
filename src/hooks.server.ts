@@ -35,7 +35,7 @@ const startupWebsocketServer = () => {
 	console.log('[wss:kit] setup');
 	const wss = (globalThis as ExtendedGlobal)[GlobalThisWSS];
 	if (wss !== undefined) {
-		wss.on('connection', (ws: ExtendedWebSocket, _request) => {
+		wss.on('connection', (ws: ExtendedWebSocket) => {
 			// This is where you can authenticate the client from the request
 			// const session = await getSessionFromCookie(request.headers.cookie || '');
 			// if (!session) ws.close(1008, 'User not authenticated');

@@ -7,7 +7,7 @@ export interface WebSocketMessage {
 	type: MessageType;
 	action: Action;
 	category: string;
-	payload: any;
+	payload: unknown;
 }
 
 export interface WebSocketError extends WebSocketMessage {

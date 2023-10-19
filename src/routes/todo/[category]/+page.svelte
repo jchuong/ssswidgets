@@ -11,7 +11,7 @@
 	if (browser) {
 		socket = new WebSocket('ws://localhost:5173/websocket');
 		socket.addEventListener('open', () => {
-			console.log('listening on wss');
+			// Fetch file content, but maybe it can be a page.server function
 			const message: WebSocketTodo = {
 				type: 'TODO',
 				action: 'READ',
@@ -22,7 +22,6 @@
 		});
 
 		socket.addEventListener('message', (event) => {
-			console.log('received message', event.data);
 			try {
 				const message: WebSocketMessage = JSON.parse(event.data);
 				if (message.type !== 'TODO' || message.category !== data.category) {
@@ -30,7 +29,6 @@
 					return;
 				} else if (message.action === 'ERROR') {
 					error = (message as WebSocketError).payload;
-					console.log('got an error', error);
 				} else {
 					checkboxes = (message as WebSocketTodo).payload;
 				}
