@@ -1,0 +1,10 @@
+[
+	{
+		"label": "First",
+		"checked": true
+	},
+	{
+		"label": "Second",
+		"checked": false
+	}
+]
