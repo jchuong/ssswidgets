@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { Checkbox, El } from 'yesvelte';
-	import type { TodoItem, WebSocketTodo } from '$types';
+	import { Alert, Checkbox, El } from 'yesvelte';
+	import type { TodoItem, WebSocketError, WebSocketMessage, WebSocketTodo } from '$types';
 
 	export let data;
 
 	let socket: WebSocket;
+	let error: string;
 	let checkboxes: Array<TodoItem> = [];
 	if (browser) {
 		socket = new WebSocket('ws://localhost:5173/websocket');
@@ -23,12 +24,16 @@
 		socket.addEventListener('message', (event) => {
 			console.log('received message', event.data);
 			try {
-				const message: WebSocketTodo = JSON.parse(event.data);
+				const message: WebSocketMessage = JSON.parse(event.data);
 				if (message.type !== 'TODO' || message.category !== data.category) {
 					// Message was not for this client
 					return;
+				} else if (message.action === 'ERROR') {
+					error = (message as WebSocketError).payload;
+					console.log('got an error', error);
+				} else {
+					checkboxes = (message as WebSocketTodo).payload;
 				}
-				checkboxes = message.payload;
 			} catch (err) {
 				console.error(err);
 			}
@@ -62,4 +67,9 @@
 			on:change={() => handleChange(item.label)}
 		/>
 	{/each}
+	{#if error}
+		<Alert important icon="alert-triangle" color="warning">
+			{error}
+		</Alert>
+	{/if}
 </El>

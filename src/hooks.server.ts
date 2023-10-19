@@ -54,6 +54,13 @@ const startupWebsocketServer = () => {
 						if (payload) {
 							// send to client
 							ws.send(JSON.stringify({ ...data, payload }));
+						} else {
+							const errorData: WebSocketMessage = {
+								...data,
+								action: 'ERROR',
+								payload: `Failed to read JSON file for ${data.type} ${data.category}. Are you sure it exists?`
+							};
+							ws.send(JSON.stringify(errorData));
 						}
 					} else {
 						let success = false;
