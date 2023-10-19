@@ -60,17 +60,14 @@
 		<Spinner color="primary" />
 	{/if}
 	{#each checkboxes as item (item.label)}
-		<Checkbox
-			checked={item.checked}
-			on:change={() => handleChange(item.label)}
-		>
-		{#if item.checked}
-			<El tag="s">
+		<Checkbox checked={item.checked} on:change={() => handleChange(item.label)}>
+			{#if item.checked}
+				<El tag="s">
+					{item.label}
+				</El>
+			{:else}
 				{item.label}
-			</El>
-		{:else}
-			{item.label}
-		{/if}
+			{/if}
 		</Checkbox>
 	{/each}
 	{#if error}
