@@ -33,3 +33,14 @@ export function writeConfigFile(data: WebSocketMessage) {
 	}
 	return false;
 }
+
+export function listConfigFiles(type: MessageType) {
+	const typePath = TypePathMapping[type];
+	try {
+		const files = fs.readdirSync(path.join('data', typePath));
+		return files;
+	} catch (err) {
+		console.error(err);
+		throw err;
+	}
+}
