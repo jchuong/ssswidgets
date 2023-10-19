@@ -62,9 +62,16 @@
 	{#each checkboxes as item (item.label)}
 		<Checkbox
 			checked={item.checked}
-			label={item.label}
 			on:change={() => handleChange(item.label)}
-		/>
+		>
+		{#if item.checked}
+			<El tag="s">
+				{item.label}
+			</El>
+		{:else}
+			{item.label}
+		{/if}
+		</Checkbox>
 	{/each}
 	{#if error}
 		<Alert important icon="alert-triangle" color="warning">
