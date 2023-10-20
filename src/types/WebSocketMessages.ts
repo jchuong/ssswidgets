@@ -1,7 +1,14 @@
 import type { TodoItem } from '$types';
+import type { WebSocket } from 'ws';
 
-export type MessageType = 'TODO';
+export type MessageType = 'TODO' | 'ELAPSED';
 export type Action = 'READ' | 'WRITE' | 'ERROR';
+
+export interface WebSocketHandlerParams {
+	ws: WebSocket;
+	data: WebSocketMessage;
+	broadcast: (data: Object) => void;
+}
 
 export interface WebSocketMessage {
 	type: MessageType;
@@ -18,4 +25,9 @@ export interface WebSocketError extends WebSocketMessage {
 export interface WebSocketTodo extends WebSocketMessage {
 	type: 'TODO';
 	payload: Array<TodoItem>;
+}
+
+export interface WebSocketElapsed extends WebSocketMessage {
+	type: 'ELAPSED';
+	payload: number; // ms
 }

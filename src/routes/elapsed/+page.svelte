@@ -1,9 +1,19 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+	import type { WebSocketElapsed, WebSocketError, WebSocketMessage } from '$types';
 	import { Button, El } from 'yesvelte';
 	let startTime: number;
 	let running = false;
 	let elapsedTime = 0;
 	let timerInterval: NodeJS.Timeout;
+	let socket: WebSocket;
+
+	if (browser) {
+		socket = new WebSocket('ws://localhost:5173/websocket');
+		socket.addEventListener('open', () => {
+			console.log('Elapsed controller ready');
+		});
+	}
 
 	function startTimer() {
 		running = true;
@@ -24,6 +34,16 @@
 		running = false;
 		clearInterval(timerInterval);
 		elapsedTime = 0;
+		if (socket) {
+			socket.send(
+				JSON.stringify({
+					type: 'ELAPSED',
+					action: 'WRITE',
+					category: '',
+					payload: elapsedTime
+				} as WebSocketElapsed)
+			);
+		}
 	}
 
 	function updateElapsedTime() {
@@ -31,7 +51,16 @@
 		const diff = currentTime - startTime;
 		elapsedTime += diff;
 		startTime = currentTime;
-		console.log(elapsedTime);
+		if (socket) {
+			socket.send(
+				JSON.stringify({
+					type: 'ELAPSED',
+					action: 'WRITE',
+					category: '',
+					payload: elapsedTime
+				} as WebSocketElapsed)
+			);
+		}
 	}
 
 	function formatTime(milliseconds: number) {

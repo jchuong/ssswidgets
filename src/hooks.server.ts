@@ -24,6 +24,7 @@
 import { building } from '$app/environment';
 import { GlobalThisWSS } from '$lib/server/webSocketUtils';
 import * as todo from './server/todoHandler';
+import * as elapsed from './server/elapsedHandler';
 import type { Handle } from '@sveltejs/kit';
 import type { ExtendedGlobal } from '$lib/server/webSocketUtils';
 import type { WebSocketMessage } from '$types';
@@ -38,7 +39,7 @@ const startupWebsocketServer = () => {
 		const broadcast = (data: Object) => {
 			const message = JSON.stringify(data);
 			wss.clients.forEach((client) => client.send(message));
-		}
+		};
 		wss.on('connection', (ws) => {
 			// This is where you can authenticate the client from the request
 			// const session = await getSessionFromCookie(request.headers.cookie || '');
@@ -55,7 +56,10 @@ const startupWebsocketServer = () => {
 					const data: WebSocketMessage = JSON.parse(event.toString());
 					switch (data.type) {
 						case 'TODO': {
-							todo.handle(ws, data, broadcast);
+							todo.handle({ ws, data, broadcast });
+						}
+						case 'ELAPSED': {
+							elapsed.handle({ ws, data, broadcast });
 						}
 						default:
 							throw new Error('Unexpected message type');
