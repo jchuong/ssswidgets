@@ -23,9 +23,9 @@
  */
 import { building } from '$app/environment';
 import { GlobalThisWSS } from '$lib/server/webSocketUtils';
+import * as todo from './server/todoHandler';
 import type { Handle } from '@sveltejs/kit';
 import type { ExtendedGlobal } from '$lib/server/webSocketUtils';
-import { readConfigFile, writeConfigFile } from '$lib/server/dataUtils';
 import type { WebSocketMessage } from '$types';
 
 // This can be extracted into a separate file
@@ -35,6 +35,10 @@ const startupWebsocketServer = () => {
 	console.log('[wss:kit] setup');
 	const wss = (globalThis as ExtendedGlobal)[GlobalThisWSS];
 	if (wss !== undefined) {
+		const broadcast = (data: Object) => {
+			const message = JSON.stringify(data);
+			wss.clients.forEach((client) => client.send(message));
+		}
 		wss.on('connection', (ws) => {
 			// This is where you can authenticate the client from the request
 			// const session = await getSessionFromCookie(request.headers.cookie || '');
@@ -49,32 +53,12 @@ const startupWebsocketServer = () => {
 			ws.on('message', (event) => {
 				try {
 					const data: WebSocketMessage = JSON.parse(event.toString());
-					if (data.action === 'READ') {
-						const payload = readConfigFile(data);
-						if (payload) {
-							// send to client
-							ws.send(JSON.stringify({ ...data, payload }));
-						} else {
-							const errorData: WebSocketMessage = {
-								...data,
-								action: 'ERROR',
-								payload: `Failed to read JSON file for ${data.type} '${data.category}'. Are you sure it exists?`
-							};
-							ws.send(JSON.stringify(errorData));
+					switch (data.type) {
+						case 'TODO': {
+							todo.handle(ws, data, broadcast);
 						}
-					} else {
-						let success = false;
-						switch (data.type) {
-							case 'TODO':
-								success = writeConfigFile(data);
-								break;
-							default:
-								throw new Error('Unexpected message type');
-						}
-						if (success) {
-							// Broadcast updates too all
-							wss.clients.forEach((client) => client.send(JSON.stringify(data)));
-						}
+						default:
+							throw new Error('Unexpected message type');
 					}
 				} catch (err) {
 					console.error(err);
