@@ -1,6 +1,6 @@
 # SSSWidgets - Simple Svelte Stream Widgets
 
-A small project containing some widgets for streaming, built with SvelteKit and yesvelte.
+A small project containing some widgets for streaming, built with SvelteKit and [YeSvelte](https://www.yesvelte.com).
 The main idea behind the project is to be able to easily add some simple widget to OBS and control it via a browser in real time.
 
 ## Developing and using the app
