@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import type { WebSocketElapsed, WebSocketError, WebSocketMessage } from '$types';
+	import type { WebSocketElapsed } from '$types';
 	import { Button, El } from 'yesvelte';
 	let startTime: number;
 	let running = false;
