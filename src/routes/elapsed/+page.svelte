@@ -18,7 +18,7 @@
 	function startTimer() {
 		running = true;
 		startTime = performance.now();
-		timerInterval = setInterval(updateElapsedTime, 1000);
+		timerInterval = setInterval(updateElapsedTime, 300);
 	}
 
 	function pauseTimer() {
