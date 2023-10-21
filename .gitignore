@@ -11,3 +11,5 @@ vite.config.ts.timestamp-*
 /data/**/*.json
 !/data/todo/README.md
 !/data/todo/example.json
+!/data/split/README.md
+!/data/split/example.json

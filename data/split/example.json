@@ -1,0 +1,24 @@
+{
+	"useAttempts": true,
+	"useTime": true,
+	"splits": [
+		{
+			"title": "Lady Butterfly",
+			"time": 0,
+			"attempts": 0,
+			"active": true
+		},
+		{
+			"title": "Genny",
+			"time": 0,
+			"attempts": 0,
+			"active": false
+		},
+		{
+			"title": "monke",
+			"time": 0,
+			"attempts": 0,
+			"active": false
+		}
+	]
+}
