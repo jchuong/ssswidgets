@@ -24,9 +24,12 @@
 		{ totalTime: 0, totalAttempts: 0 }
 	);
 
-	let activeRow = splits.findIndex((split) => split.active) || 0;
-	let elapsedTime = splits[activeRow].time;
-	$: currentAttempts = splits[activeRow].attempts;
+	$: activeRow = Math.max(
+		splits.findIndex((split) => split.active),
+		0
+	);
+	$: elapsedTime = splits[activeRow].time || 0;
+	$: currentAttempts = splits[activeRow].attempts || 0;
 
 	function decreaseAttempts() {
 		if (splits[activeRow].attempts > 0) {
@@ -37,6 +40,13 @@
 	function increaseAttempts() {
 		splits[activeRow].attempts += 1;
 	}
+
+	function nextSplit() {
+		splits[activeRow].active = false;
+		if (activeRow < splits.length) {
+			splits[activeRow + 1].active = true;
+		}
+	}
 </script>
 
 <Table border>
@@ -45,6 +55,7 @@
 			<TableCell />
 			{#if useTime}<TableCell>Time</TableCell> {/if}
 			{#if useAttempts}<TableCell>Attempts</TableCell>{/if}
+			<TableCell />
 		</TableRow>
 	</TableHead>
 	<TableBody>
@@ -66,6 +77,9 @@
 							>
 						{/if}
 					</TableCell>{/if}
+				<TableCell>
+					{#if split.active}<Button color="primary" on:click={nextSplit}>Next</Button>{/if}
+				</TableCell>
 			</TableRow>
 		{/each}
 	</TableBody>
@@ -74,6 +88,7 @@
 			<TableCell>Total</TableCell>
 			{#if useTime}<TableCell>{summary.totalTime}</TableCell>{/if}
 			{#if useAttempts}<TableCell>{summary.totalAttempts}</TableCell>{/if}
+			<TableCell />
 		</TableRow>
 	</TableFoot>
 </Table>
