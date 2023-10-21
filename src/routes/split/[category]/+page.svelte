@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+    import { page } from '$app/stores';
 	import type {
 		Split,
 		WebSocketError,
@@ -27,6 +28,7 @@
 	let socket: WebSocket;
 	let startTime: number;
 	let timerInterval: ReturnType<typeof setInterval>;
+    let readOnly = $page.url.searchParams.get('view') !== null;
 
 	if (browser) {
 		socket = new WebSocket('ws://localhost:5173/websocket');
@@ -43,9 +45,8 @@
 					return;
 				} else if (message.action === 'ERROR') {
 					error = (message as WebSocketError).payload;
-				} else if (message.action === 'READ' && false) {
-					// TODO: update for viewer
-					data.config.splits = (message as WebSocketSplitRead).payload;
+				} else if (message.action === 'READ' && readOnly) {
+					splits = (message as WebSocketSplitRead).payload;
 				}
 			} catch (err) {
 				console.error(err);
@@ -152,7 +153,7 @@
 				</TableCell>
 				{#if useTime}<TableCell>
 						<El tag="span" me="2">{formatTime(split.time)}</El>
-						{#if split.active}<ButtonGroup
+						{#if split.active && !readOnly}<ButtonGroup
 								><Button color="danger" on:click={stopTimer} disabled={!running}
 									><Icon name="alarm-off" /></Button
 								><Button color="primary" on:click={startTimer} disabled={running}
@@ -164,7 +165,7 @@
 				{/if}
 				{#if useAttempts}<TableCell
 						><El tag="span" me="2">{split.attempts}</El>
-						{#if split.active}<ButtonGroup
+						{#if split.active && !readOnly}<ButtonGroup
 								><Button color="danger" on:click={decreaseAttempts} disabled={currentAttempts === 0}
 									><Icon name="minus" /></Button
 								><Button color="primary" on:click={increaseAttempts}><Icon name="plus" /></Button
@@ -173,7 +174,7 @@
 						{/if}
 					</TableCell>{/if}
 				<TableCell>
-					{#if split.active}<Button color="primary" on:click={nextSplit} disabled={running}
+					{#if split.active && !readOnly}<Button color="primary" on:click={nextSplit} disabled={running}
 							>Next</Button
 						>{/if}
 				</TableCell>
