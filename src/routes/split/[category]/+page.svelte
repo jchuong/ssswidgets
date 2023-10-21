@@ -14,6 +14,9 @@
 	} from 'yesvelte';
 	export let data;
 	let { useAttempts, useTime, splits } = data.config;
+	let running = false;
+	let startTime: number;
+	let timerInterval: ReturnType<typeof setInterval>;
 
 	$: summary = splits.reduce(
 		(memo, split) => {
@@ -28,7 +31,6 @@
 		splits.findIndex((split) => split.active),
 		0
 	);
-	$: elapsedTime = splits[activeRow].time || 0;
 	$: currentAttempts = splits[activeRow].attempts || 0;
 
 	function decreaseAttempts() {
@@ -46,6 +48,32 @@
 		if (activeRow < splits.length) {
 			splits[activeRow + 1].active = true;
 		}
+	}
+
+	function startTimer() {
+		running = true;
+		startTime = performance.now();
+		timerInterval = setInterval(updateElapsedTime, 300);
+	}
+
+	function stopTimer() {
+		// add partial time then pause
+		running = false;
+		const currentTime = performance.now();
+		const diff = currentTime - startTime;
+		splits[activeRow].time += diff;
+		clearInterval(timerInterval);
+	}
+
+	function updateElapsedTime() {
+		const currentTime = performance.now();
+		const diff = currentTime - startTime;
+		startTime = currentTime;
+		splits[activeRow].time += diff;
+	}
+
+	function formatTime(milliseconds: number) {
+		return new Date(milliseconds).toISOString().substr(11, 8);
 	}
 </script>
 
@@ -66,7 +94,18 @@
 					{#if split.active}<Dot color="primary" />
 					{/if}
 				</TableCell>
-				{#if useTime}<TableCell>{split.time}</TableCell> {/if}
+				{#if useTime}<TableCell>
+						<El tag="span" me="2">{formatTime(split.time)}</El>
+						{#if split.active}<ButtonGroup
+								><Button color="danger" on:click={stopTimer} disabled={!running}
+									><Icon name="alarm-off" /></Button
+								><Button color="primary" on:click={startTimer} disabled={running}
+									><Icon name="alarm" /></Button
+								></ButtonGroup
+							>
+						{/if}
+					</TableCell>
+				{/if}
 				{#if useAttempts}<TableCell
 						><El tag="span" me="2">{split.attempts}</El>
 						{#if split.active}<ButtonGroup
@@ -86,7 +125,7 @@
 	<TableFoot>
 		<TableRow color="primary">
 			<TableCell>Total</TableCell>
-			{#if useTime}<TableCell>{summary.totalTime}</TableCell>{/if}
+			{#if useTime}<TableCell>{formatTime(summary.totalTime)}</TableCell>{/if}
 			{#if useAttempts}<TableCell>{summary.totalAttempts}</TableCell>{/if}
 			<TableCell />
 		</TableRow>
