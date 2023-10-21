@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { El } from 'yesvelte';
+	import { Alert, El } from 'yesvelte';
 	import { browser } from '$app/environment';
 	import type { WebSocketError, WebSocketMessage, WebSocketElapsed } from '$types';
 
 	let socket: WebSocket;
-	let error;
+	let error: string;
 	let milliseconds: number = 0;
 	if (browser) {
 		socket = new WebSocket('ws://localhost:5173/websocket');
@@ -37,3 +37,6 @@
 <El tag="p" fontSize="1">
 	{formatTime(milliseconds)}
 </El>
+{#if error}
+	<Alert color="danger">{error}</Alert>
+{/if}

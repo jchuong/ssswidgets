@@ -36,7 +36,7 @@ const startupWebsocketServer = () => {
 	console.log('[wss:kit] setup');
 	const wss = (globalThis as ExtendedGlobal)[GlobalThisWSS];
 	if (wss !== undefined) {
-		const broadcast = (data: Object) => {
+		const broadcast = (data: object) => {
 			const message = JSON.stringify(data);
 			wss.clients.forEach((client) => client.send(message));
 		};
@@ -57,9 +57,11 @@ const startupWebsocketServer = () => {
 					switch (data.type) {
 						case 'TODO': {
 							todo.handle({ ws, data, broadcast });
+							break;
 						}
 						case 'ELAPSED': {
 							elapsed.handle({ ws, data, broadcast });
+							break;
 						}
 						default:
 							throw new Error('Unexpected message type');

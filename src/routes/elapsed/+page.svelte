@@ -5,7 +5,7 @@
 	let startTime: number;
 	let running = false;
 	let elapsedTime = 0;
-	let timerInterval: NodeJS.Timeout;
+	let timerInterval: ReturnType<typeof setInterval>;
 	let socket: WebSocket;
 
 	if (browser) {
