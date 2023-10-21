@@ -42,11 +42,12 @@
 				</CardFooter>
 			</Card>
 		</El>
-				<El col>
+		<El col>
 			<Card title="Split"
 				><CardBody>
-					A list with active row control, optionally have one or both time elapsed and attempt counts with a summary at the bottom.
-					The <El tag="code">data/split</El> directory will contain your progress and configuration.
+					A list with active row control, optionally have one or both time elapsed and attempt
+					counts with a summary at the bottom. The <El tag="code">data/split</El> directory will contain
+					your progress and configuration.
 				</CardBody>
 				<CardFooter>
 					<CardActions>

@@ -1,4 +1,4 @@
-import type { TodoItem } from '$types';
+import type { TodoItem, Split } from '$types';
 import type { WebSocket } from 'ws';
 
 export type MessageType = 'TODO' | 'ELAPSED' | 'SPLIT';
@@ -30,4 +30,18 @@ export interface WebSocketTodo extends WebSocketMessage {
 export interface WebSocketElapsed extends WebSocketMessage {
 	type: 'ELAPSED';
 	payload: number; // ms
+}
+
+// Listener
+export interface WebSocketSplitRead extends WebSocketMessage {
+	type: 'SPLIT';
+	action: 'READ';
+	payload: Array<Split>;
+}
+
+// For controller to not be rollbacked during timer
+export interface WebSocketSplitWrite extends WebSocketMessage {
+	type: 'SPLIT';
+	action: 'WRITE';
+	payload: Array<Split>;
 }

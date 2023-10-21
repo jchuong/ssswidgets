@@ -1,4 +1,12 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+	import type {
+		Split,
+		WebSocketError,
+		WebSocketMessage,
+		WebSocketSplitRead,
+		WebSocketSplitWrite
+	} from '$types';
 	import {
 		Dot,
 		El,
@@ -13,10 +21,37 @@
 		Button
 	} from 'yesvelte';
 	export let data;
-	let { useAttempts, useTime, splits } = data.config;
+	let error: string;
+	let { useAttempts = false, useTime = false, splits = [] } = data.config;
 	let running = false;
+	let socket: WebSocket;
 	let startTime: number;
 	let timerInterval: ReturnType<typeof setInterval>;
+
+	if (browser) {
+		socket = new WebSocket('ws://localhost:5173/websocket');
+
+		socket.addEventListener('open', () => {
+			console.log('Split ready');
+		});
+
+		socket.addEventListener('message', (event) => {
+			try {
+				const message: WebSocketMessage = JSON.parse(event.data);
+				if (message.type !== 'SPLIT' || message.category !== data.category) {
+					// Message was not for this client
+					return;
+				} else if (message.action === 'ERROR') {
+					error = (message as WebSocketError).payload;
+				} else if (message.action === 'READ' && false) {
+					// TODO: update for viewer
+					data.config.splits = (message as WebSocketSplitRead).payload;
+				}
+			} catch (err) {
+				console.error(err);
+			}
+		});
+	}
 
 	$: summary = splits.reduce(
 		(memo, split) => {
@@ -31,16 +66,19 @@
 		splits.findIndex((split) => split.active),
 		0
 	);
+
 	$: currentAttempts = splits[activeRow].attempts || 0;
 
 	function decreaseAttempts() {
 		if (splits[activeRow].attempts > 0) {
 			splits[activeRow].attempts -= 1;
 		}
+		sendUpdate(splits);
 	}
 
 	function increaseAttempts() {
 		splits[activeRow].attempts += 1;
+		sendUpdate(splits);
 	}
 
 	function nextSplit() {
@@ -48,12 +86,14 @@
 		if (activeRow < splits.length - 1) {
 			splits[activeRow + 1].active = true;
 		}
+		sendUpdate(splits);
 	}
 
 	function startTimer() {
 		running = true;
 		startTime = performance.now();
-		timerInterval = setInterval(updateElapsedTime, 300);
+		// Just 1s since we are writing to disk now
+		timerInterval = setInterval(updateElapsedTime, 1000);
 	}
 
 	function stopTimer() {
@@ -63,6 +103,7 @@
 		const diff = currentTime - startTime;
 		splits[activeRow].time += diff;
 		clearInterval(timerInterval);
+		sendUpdate(splits);
 	}
 
 	function updateElapsedTime() {
@@ -70,6 +111,21 @@
 		const diff = currentTime - startTime;
 		startTime = currentTime;
 		splits[activeRow].time += diff;
+		sendUpdate(splits);
+	}
+
+	function sendUpdate(newSplits: Array<Split>) {
+		if (!socket) {
+			return;
+		}
+		socket.send(
+			JSON.stringify({
+				action: 'WRITE',
+				category: data.category,
+				type: 'SPLIT',
+				payload: newSplits
+			} as WebSocketSplitWrite)
+		);
 	}
 
 	function formatTime(milliseconds: number) {
@@ -117,7 +173,9 @@
 						{/if}
 					</TableCell>{/if}
 				<TableCell>
-					{#if split.active}<Button color="primary" on:click={nextSplit}>Next</Button>{/if}
+					{#if split.active}<Button color="primary" on:click={nextSplit} disabled={running}
+							>Next</Button
+						>{/if}
 				</TableCell>
 			</TableRow>
 		{/each}

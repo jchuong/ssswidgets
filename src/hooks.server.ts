@@ -25,6 +25,7 @@ import { building } from '$app/environment';
 import { GlobalThisWSS } from '$lib/server/webSocketUtils';
 import * as todo from './server/todoHandler';
 import * as elapsed from './server/elapsedHandler';
+import * as split from './server/splitHandler';
 import type { Handle } from '@sveltejs/kit';
 import type { ExtendedGlobal } from '$lib/server/webSocketUtils';
 import type { WebSocketMessage } from '$types';
@@ -61,6 +62,10 @@ const startupWebsocketServer = () => {
 						}
 						case 'ELAPSED': {
 							elapsed.handle({ ws, data, broadcast });
+							break;
+						}
+						case 'SPLIT': {
+							split.handle({ ws, data, broadcast });
 							break;
 						}
 						default:
