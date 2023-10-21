@@ -3,17 +3,19 @@ import fs from 'fs';
 import path from 'path';
 
 const TypePathMapping: Record<MessageType, string> = {
-	TODO: 'todo'
+	TODO: 'todo',
+	ELAPSED: 'elapsed',
+	SPLIT: 'split'
 };
 
-function getFilePath(data: WebSocketMessage) {
-	const typePath = TypePathMapping[data.type];
-	const filePath = path.join('data', `${typePath}`, `${data.category}.json`);
+function getFilePath(type: MessageType, category: string) {
+	const typePath = TypePathMapping[type];
+	const filePath = path.join('data', `${typePath}`, `${category}.json`);
 	return filePath;
 }
 
-export function readConfigFile(data: WebSocketMessage) {
-	const filePath = getFilePath(data);
+export function readConfigFile(type: MessageType, category: string) {
+	const filePath = getFilePath(type, category);
 	try {
 		const content = fs.readFileSync(filePath, { encoding: 'utf8' });
 		return JSON.parse(content);
@@ -24,7 +26,7 @@ export function readConfigFile(data: WebSocketMessage) {
 }
 
 export function writeConfigFile(data: WebSocketMessage) {
-	const filePath = getFilePath(data);
+	const filePath = getFilePath(data.type, data.category);
 	try {
 		fs.writeFileSync(filePath, JSON.stringify(data.payload, null, 2));
 		return true;

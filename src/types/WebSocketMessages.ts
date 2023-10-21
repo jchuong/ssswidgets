@@ -1,7 +1,7 @@
 import type { TodoItem } from '$types';
 import type { WebSocket } from 'ws';
 
-export type MessageType = 'TODO' | 'ELAPSED';
+export type MessageType = 'TODO' | 'ELAPSED' | 'SPLIT';
 export type Action = 'READ' | 'WRITE' | 'ERROR';
 
 export interface WebSocketHandlerParams {
