@@ -7,7 +7,7 @@ export type Action = 'READ' | 'WRITE' | 'ERROR';
 export interface WebSocketHandlerParams {
 	ws: WebSocket;
 	data: WebSocketMessage;
-	broadcast: (data: Object) => void;
+	broadcast: (data: object) => void;
 }
 
 export interface WebSocketMessage {

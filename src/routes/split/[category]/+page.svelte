@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-    import { page } from '$app/stores';
+	import { page } from '$app/stores';
 	import type {
 		Split,
 		WebSocketError,
@@ -9,6 +9,7 @@
 		WebSocketSplitWrite
 	} from '$types';
 	import {
+		Alert,
 		Dot,
 		El,
 		Icon,
@@ -28,7 +29,7 @@
 	let socket: WebSocket;
 	let startTime: number;
 	let timerInterval: ReturnType<typeof setInterval>;
-    let readOnly = $page.url.searchParams.get('view') !== null;
+	let readOnly = $page.url.searchParams.get('view') !== null;
 
 	if (browser) {
 		socket = new WebSocket('ws://localhost:5173/websocket');
@@ -134,6 +135,9 @@
 	}
 </script>
 
+{#if error}
+	<Alert color="danger">{error}</Alert>
+{/if}
 <Table border>
 	<TableHead>
 		<TableRow>
@@ -174,8 +178,10 @@
 						{/if}
 					</TableCell>{/if}
 				<TableCell>
-					{#if split.active && !readOnly}<Button color="primary" on:click={nextSplit} disabled={running}
-							>Next</Button
+					{#if split.active && !readOnly}<Button
+							color="primary"
+							on:click={nextSplit}
+							disabled={running}>Next</Button
 						>{/if}
 				</TableCell>
 			</TableRow>

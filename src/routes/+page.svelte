@@ -47,7 +47,8 @@
 				><CardBody>
 					A list with active row control, optionally have one or both time elapsed and attempt
 					counts with a summary at the bottom. The <El tag="code">data/split</El> directory will contain
-					your progress and configuration.
+					your progress and configuration. Use <El tag="code">?view</El> in the url for OBS browser source:
+					<El tag="code">localhost:5173/split/example?view</El>
 				</CardBody>
 				<CardFooter>
 					<CardActions>

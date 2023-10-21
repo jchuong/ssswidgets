@@ -11,7 +11,8 @@ useTime: boolean - show the timer for each split
 useAttempts: boolean - show counter for attempts
 
 splits:
-  - title: title to show
-  - time: accumulated ms on this segment
-  - attempts: number of attempts at this segment
-  - active: boolean is this the current segment
+
+- title: title to show
+- time: accumulated ms on this segment
+- attempts: number of attempts at this segment
+- active: boolean is this the current segment
