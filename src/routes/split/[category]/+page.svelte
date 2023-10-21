@@ -45,7 +45,7 @@
 
 	function nextSplit() {
 		splits[activeRow].active = false;
-		if (activeRow < splits.length) {
+		if (activeRow < splits.length - 1) {
 			splits[activeRow + 1].active = true;
 		}
 	}
